@@ -8,4 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface MotorCycleRepository extends JpaRepository<MotorCycleModel, UUID> {
+    //Methods: VALIDATE placa do carro já existe?
+    boolean existsByPlaca(String placa);
 }
