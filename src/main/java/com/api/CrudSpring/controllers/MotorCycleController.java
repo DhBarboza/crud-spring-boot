@@ -12,6 +12,8 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 // Permitir que seja acessado de qualquer fonte:
@@ -43,5 +45,39 @@ public class MotorCycleController {
         return ResponseEntity.status(HttpStatus.OK).body(motorCycleService.findAll());
     }
 
+    //[Method: GET by id | READ]
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getMotorCyclesById(@PathVariable(value = "id") UUID id) {
+        Optional<MotorCycleModel> motorCycleModelOptional = motorCycleService.findById(id);
+        if (!motorCycleModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(motorCycleModelOptional.get());
+    }
+
+    //[Method: DELETE | DELETE]
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteMotorCyclesById(@PathVariable(value = "id") UUID id) {
+        Optional<MotorCycleModel> motorCycleModelOptional = motorCycleService.findById(id);
+        if (!motorCycleModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado");
+        }
+        motorCycleService.delete(motorCycleModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Registro deletado com sucesso");
+    }
+
+    //[Method: PUT | UPDATE]
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateMotorCycle(@PathVariable(value = "id") UUID id, @RequestBody @Valid MotorCycleDtos motorCycleDtos) {
+        Optional<MotorCycleModel> motorCycleModelOptional = motorCycleService.findById(id);
+        if (!motorCycleModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado");
+        }
+        var motorCycleModel = new MotorCycleModel();
+        BeanUtils.copyProperties(motorCycleDtos, motorCycleModel);
+        motorCycleModel.setId(motorCycleModelOptional.get().getId());
+        motorCycleModel.setDataRegistro(motorCycleModelOptional.get().getDataRegistro());
+        return ResponseEntity.status(HttpStatus.OK).body(motorCycleService.save(motorCycleModel));
+    }
 
 }

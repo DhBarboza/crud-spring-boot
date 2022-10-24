@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MotorCycleService {
@@ -30,5 +32,14 @@ public class MotorCycleService {
     public List<MotorCycleModel> findAll() {
         //Method: READ
         return motorCycleRepository.findAll();
+    }
+
+    public Optional<MotorCycleModel> findById(UUID id) {
+        return motorCycleRepository.findById(id);
+    }
+
+    @Transactional
+    public void delete(MotorCycleModel motorCycleModel) {
+        motorCycleRepository.delete(motorCycleModel);
     }
 }
